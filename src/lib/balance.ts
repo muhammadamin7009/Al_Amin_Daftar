@@ -280,3 +280,43 @@ export async function homeTotals(
       .minus(toWorkers._sum.amount ?? ZERO),
   };
 }
+
+export type ProductFolder = {
+  name: string;
+  /** Ichidagi mahsulotlar soni */
+  count: number;
+  /** Hammasining qoldig'i qo'shilgan holda */
+  stock: Prisma.Decimal;
+};
+
+/**
+ * Ombor papka ko'rinishida: nomi bir xil mahsulotlar bitta papkaga yig'iladi.
+ * Papka nomi — model nomi.
+ */
+export async function listProductFolders(
+  companyId: string,
+): Promise<ProductFolder[]> {
+  const products = await listProducts(companyId);
+
+  const folders = new Map<string, ProductFolder>();
+  for (const p of products) {
+    const found = folders.get(p.name);
+    if (found) {
+      found.count += 1;
+      found.stock = found.stock.plus(p.stock);
+    } else {
+      folders.set(p.name, { name: p.name, count: 1, stock: p.stock });
+    }
+  }
+
+  return [...folders.values()].sort((a, b) => a.name.localeCompare(b.name, "uz"));
+}
+
+/** Bitta papka ichidagi mahsulotlar */
+export async function listFolderProducts(
+  companyId: string,
+  name: string,
+): Promise<ProductRow[]> {
+  const products = await listProducts(companyId);
+  return products.filter((p) => p.name === name);
+}

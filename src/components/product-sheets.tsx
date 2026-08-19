@@ -11,24 +11,30 @@ import {
 import type { FormState } from "@/server/form-state";
 
 /** Ro'yxatdagi doimiy + tugmasi va yangi model modali */
-export function NewProductSheet() {
+export function NewProductSheet({
+  defaultName = "",
+  label = "+ Yangi model",
+}: {
+  defaultName?: string;
+  label?: string;
+} = {}) {
   const [open, setOpen] = useState(false);
   const [state, action, pending] = useActionState<FormState, FormData>(
     createProductAction,
     {},
   );
 
-  const [name, setName] = useState("");
+  const [name, setName] = useState(defaultName);
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
 
   useEffect(() => {
     if (!state.ok) return;
     setOpen(false);
-    setName("");
+    setName(defaultName);
     setDescription("");
     setPrice("");
-  }, [state]);
+  }, [state, defaultName]);
 
   const errors = state.errors ?? {};
 
@@ -40,7 +46,7 @@ export function NewProductSheet() {
         aria-label={PRODUCT_SECTION.addTitle}
         className="btn-dark mt-6"
       >
-        + Yangi model
+        {label}
       </button>
 
       <BottomSheet

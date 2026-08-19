@@ -1,9 +1,11 @@
 import Link from "next/link";
-import { homeTotals, listProducts } from "@/lib/balance";
+import { Prisma } from "@prisma/client";
+import { homeTotals, listProductFolders } from "@/lib/balance";
 import { cashOnHand, expensesTotal, initials, recentParties } from "@/lib/cash";
 import { db } from "@/lib/db";
 import { formatMoney, formatSomAbs } from "@/lib/money";
-import { PRODUCT_SECTION, SECTION } from "@/lib/sections";
+import { PRODUCT_SECTION, PRODUCT_UNIT, SECTION } from "@/lib/sections";
+import { formatQtyWithUnit } from "@/lib/qty";
 import { requireSession } from "@/lib/session";
 import { TabBar } from "@/components/tab-bar";
 
@@ -12,7 +14,7 @@ const AVATAR_BG = ["bg-debt-soft", "bg-paid-soft", "bg-store-soft"];
 export default async function HomePage() {
   const session = await requireSession();
 
-  const [company, totals, cash, spent, products, recent] = await Promise.all([
+  const [company, totals, cash, spent, folders, recent] = await Promise.all([
     db.company.findUnique({
       where: { id: session.companyId },
       select: { name: true },
@@ -20,16 +22,16 @@ export default async function HomePage() {
     homeTotals(session.companyId),
     cashOnHand(session.companyId),
     expensesTotal(session.companyId),
-    listProducts(session.companyId),
+    listProductFolders(session.companyId),
     recentParties(session.companyId),
   ]);
 
-  const stock = products.reduce(
-    (acc, p) => acc + (p.stock.isPositive() ? 1 : 0),
-    0,
+  const totalStock = folders.reduce(
+    (sum, f) => sum.plus(f.stock),
+    new Prisma.Decimal(0),
   );
-  const stockLine = products.length
-    ? `${products.length} model · ${stock} tasi omborda`
+  const stockLine = folders.length
+    ? `${folders.length} model · ${formatQtyWithUnit(totalStock.toString(), PRODUCT_UNIT)}`
     : "Hali model qo'shilmagan";
 
   const tiles = [

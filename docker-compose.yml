@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: daftar
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: al_amin_daftar
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U daftar -d al_amin_daftar"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://daftar:${DB_PASSWORD}@db:5432/al_amin_daftar?schema=public
+      SESSION_SECRET: ${SESSION_SECRET}
+      NODE_ENV: production
+    # Tashqariga chiqmaydi — faqat nginx orqali
+    ports:
+      - "127.0.0.1:3000:3000"
+    command: >
+      sh -c "npx prisma migrate deploy && node server.js"
+
+volumes:
+  db-data:

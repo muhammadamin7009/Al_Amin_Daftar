@@ -78,7 +78,7 @@ so'rovlari u yerdan umuman yuborilmaydi.
 Egasini yaratish:
 
 ```bash
-npx tsx scripts/platform-admin.ts admin "kuchli parol"
+node scripts/platform-admin.mjs admin "kuchli parol"
 ```
 
 Kirish: `/platform/login`. Bu hisob korxona hisoblaridan butunlay alohida —

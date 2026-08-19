@@ -1,9 +1,10 @@
 /**
  * Platforma egasini yaratish yoki parolini almashtirish.
  *
- *   npx tsx scripts/platform-admin.ts <login> <parol>
+ *   node scripts/platform-admin.mjs <login> <parol>
  *
- * Parol kamida 8 belgi bo'lsin — bu yerdan hamma korxona ko'rinadi.
+ * Oddiy .mjs — serverdagi konteynerda tsx bo'lmasa ham ishlaydi.
+ * Parol kamida 8 belgi bo'lsin: bu yerdan hamma korxona ko'rinadi.
  */
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
@@ -14,7 +15,7 @@ async function main() {
   const [loginRaw, password] = process.argv.slice(2);
 
   if (!loginRaw || !password) {
-    console.error("Ishlatish: npx tsx scripts/platform-admin.ts <login> <parol>");
+    console.error("Ishlatish: node scripts/platform-admin.mjs <login> <parol>");
     process.exit(1);
   }
   if (password.length < 8) {
@@ -33,12 +34,11 @@ async function main() {
 
   console.log(`Platforma egasi tayyor: ${admin.login}`);
   console.log("Kirish: /platform/login");
-
-  await db.$disconnect();
 }
 
-main().catch(async (e) => {
-  console.error(e);
-  await db.$disconnect();
-  process.exit(1);
-});
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exitCode = 1;
+  })
+  .finally(() => db.$disconnect());

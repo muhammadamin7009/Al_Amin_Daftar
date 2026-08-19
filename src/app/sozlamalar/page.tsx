@@ -4,7 +4,7 @@ import { formatPhone } from "@/lib/phone";
 import { requireActiveSession } from "@/lib/session";
 import { logoutAction } from "@/server/auth-actions";
 import { removeUserAction } from "@/server/settings-actions";
-import { AddUser, RenameCompany } from "./settings-forms";
+import { AddUser, ChangePin, RenameCompany } from "./settings-forms";
 
 export default async function SettingsPage() {
   const session = await requireActiveSession();
@@ -37,6 +37,8 @@ export default async function SettingsPage() {
           </span>
         </div>
       )}
+
+      <ChangePin />
 
       <h2 className="mb-1 mt-8 text-lg font-semibold">Xodimlar</h2>
       <p className="mb-2 text-base text-faint">

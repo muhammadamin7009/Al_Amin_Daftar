@@ -120,3 +120,71 @@ export async function clearPaymentAction(formData: FormData): Promise<void> {
   revalidatePath("/platform");
 }
 
+
+export type ResetPinState = { pin?: string; error?: string; at?: number };
+
+/**
+ * Egasi kodini unutgan bo'lsa — yangi kod beriladi va bir marta ekranda
+ * ko'rsatiladi. Eski kodni hech kim, biz ham, ko'ra olmaymiz: u hashlangan.
+ */
+export async function resetOwnerPinAction(
+  _prev: ResetPinState,
+  formData: FormData,
+): Promise<ResetPinState> {
+  await requirePlatform();
+
+  const companyId = String(formData.get("companyId") ?? "");
+  if (!companyId) return { error: "Korxona topilmadi.", at: Date.now() };
+
+  const owner = await db.user.findFirst({
+    where: { companyId, role: "owner" },
+    orderBy: { createdAt: "asc" },
+    select: { id: true, phone: true },
+  });
+  if (!owner) return { error: "Bu korxonada rahbar yo'q.", at: Date.now() };
+
+  // 4 xonali tasodifiy kod
+  const pin = String(crypto.getRandomValues(new Uint32Array(1))[0] % 10000).padStart(4, "0");
+
+  await db.user.update({
+    where: { id: owner.id },
+    data: { pinHash: await bcrypt.hash(pin, 12) },
+  });
+
+  // Eski bloklanish hisobini ham tozalaymiz, egasi darrov kira olsin
+  await db.loginAttempt.deleteMany({ where: { phone: owner.phone, ok: false } });
+
+  revalidatePath("/platform");
+  return { pin, at: Date.now() };
+}
+
+/**
+ * Korxonani butunlay o'chirish. Ichidagi hamma narsa — foydalanuvchilar,
+ * mijozlar, yozuvlar — birga ketadi va qaytarib bo'lmaydi.
+ * Shuning uchun nomini qo'lda yozib tasdiqlash so'raladi.
+ */
+export async function deleteCompanyAction(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requirePlatform();
+
+  const companyId = String(formData.get("companyId") ?? "");
+  const typed = String(formData.get("confirmName") ?? "").trim();
+  if (!companyId) return fail({ form: "Korxona topilmadi." });
+
+  const company = await db.company.findUnique({
+    where: { id: companyId },
+    select: { name: true },
+  });
+  if (!company) return fail({ form: "Korxona topilmadi." });
+
+  if (typed.toLowerCase() !== company.name.trim().toLowerCase()) {
+    return fail({ confirmName: "Nom to'g'ri kelmadi" });
+  }
+
+  await db.company.delete({ where: { id: companyId } });
+
+  revalidatePath("/platform");
+  return { ok: true, at: Date.now() };
+}

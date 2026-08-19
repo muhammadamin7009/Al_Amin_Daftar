@@ -83,3 +83,39 @@ export async function removeUserAction(formData: FormData): Promise<void> {
 
   revalidatePath("/sozlamalar");
 }
+
+/**
+ * O'z maxfiy raqamini almashtirish. Kimdir kodni bilib qolsa,
+ * egasi hech kimdan so'ramasdan o'zi almashtira olsin.
+ */
+export async function changePinAction(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const session = await requireActiveSession();
+
+  const current = String(formData.get("current") ?? "");
+  const next = String(formData.get("next") ?? "");
+
+  if (!/^\d{4}$/.test(current)) return fail({ current: "Hozirgi kodni kiriting" });
+  if (!/^\d{4}$/.test(next)) return fail({ next: "Yangi kod 4 xonali bo'lsin" });
+  if (current === next) return fail({ next: "Yangi kod eskisidan farq qilsin" });
+
+  const user = await db.user.findFirst({
+    where: { id: session.userId, companyId: session.companyId },
+    select: { id: true, phone: true, pinHash: true },
+  });
+  if (!user) return fail({ form: "Foydalanuvchi topilmadi." });
+
+  const ok = await bcrypt.compare(current, user.pinHash);
+  if (!ok) return fail({ current: "Hozirgi kod noto'g'ri" });
+
+  await db.user.update({
+    where: { id: user.id },
+    data: { pinHash: await bcrypt.hash(next, PIN_COST) },
+  });
+  await db.loginAttempt.deleteMany({ where: { phone: user.phone, ok: false } });
+
+  revalidatePath("/sozlamalar");
+  return done();
+}

@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { requirePlatform } from "@/lib/platform-session";
 import { companyStatus, formatDay, type CompanyStatus } from "@/lib/subscription";
+import { DeleteCompany, ResetPin } from "./danger";
 import {
   blockCompanyAction,
   clearPaymentAction,
@@ -144,6 +145,8 @@ export default async function PlatformPage() {
                 </form>
               ) : null}
 
+              <ResetPin companyId={row.id} />
+
               <form action={blockCompanyAction} className="ml-auto">
                 <input type="hidden" name="companyId" value={row.id} />
                 <input type="hidden" name="on" value={row.blockedAt ? "0" : "1"} />
@@ -158,6 +161,10 @@ export default async function PlatformPage() {
                   {row.blockedAt ? "Blokdan chiqarish" : "Bloklash"}
                 </button>
               </form>
+            </div>
+
+            <div className="mt-3 flex justify-end">
+              <DeleteCompany companyId={row.id} name={row.name} />
             </div>
           </li>
         ))}

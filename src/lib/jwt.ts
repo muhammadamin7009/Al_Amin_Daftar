@@ -49,3 +49,37 @@ export async function verifySession(token: string): Promise<Session | null> {
     return null;
   }
 }
+
+/* ---------- Platforma egasi uchun alohida sessiya ---------- */
+
+export const PLATFORM_COOKIE = "daftar_platform";
+
+export type PlatformSession = { adminId: string; login: string };
+
+export async function signPlatformSession(
+  session: PlatformSession,
+): Promise<string> {
+  return new SignJWT({ ...session, kind: "platform" })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("12h")
+    .sign(sessionSecret());
+}
+
+/**
+ * Korxona cookie'si bu yerdan o'tolmaydi: unda `kind` yo'q va `adminId` yo'q.
+ * Platforma cookie'si ham korxona tekshiruvidan o'tmaydi — unda companyId yo'q.
+ */
+export async function verifyPlatformSession(
+  token: string,
+): Promise<PlatformSession | null> {
+  try {
+    const { payload } = await jwtVerify(token, sessionSecret());
+    const { adminId, login, kind } = payload as Record<string, unknown>;
+    if (kind !== "platform") return null;
+    if (typeof adminId !== "string" || typeof login !== "string") return null;
+    return { adminId, login };
+  } catch {
+    return null;
+  }
+}

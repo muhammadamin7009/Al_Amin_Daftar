@@ -5,14 +5,14 @@ import { PartyList } from "@/components/party-list";
 import { ScreenHeader } from "@/components/screen-header";
 import { listParties } from "@/lib/balance";
 import { SECTION, TONE_CLASS } from "@/lib/sections";
-import { requireSession } from "@/lib/session";
+import { requireActiveSession } from "@/lib/session";
 import { TabBar } from "@/components/tab-bar";
 
 const TEXT = SECTION.mijoz;
 const TONE = TONE_CLASS.paid;
 
 export default async function CustomersPage() {
-  const session = await requireSession();
+  const session = await requireActiveSession();
   const parties = await listParties(session.companyId, "mijoz");
 
   const total = parties.reduce(

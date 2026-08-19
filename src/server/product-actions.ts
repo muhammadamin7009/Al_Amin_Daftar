@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
-import { requireSession } from "@/lib/session";
+import { requireActiveSession } from "@/lib/session";
 import { PRODUCT_SECTION, PRODUCT_UNIT } from "@/lib/sections";
 import { parseMoney } from "@/lib/money";
 import { isValidQty, parseQty } from "@/lib/qty";
@@ -15,7 +15,7 @@ export async function createProductAction(
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> {
-  const session = await requireSession();
+  const session = await requireActiveSession();
 
   const name = String(formData.get("name") ?? "").trim();
   if (name.length < 2) return fail({ name: "Model nomini kiriting" });
@@ -48,7 +48,7 @@ export async function createProductionAction(
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> {
-  const session = await requireSession();
+  const session = await requireActiveSession();
 
   const productId = String(formData.get("productId") ?? "");
   if (!productId) return fail({ form: "Mahsulot topilmadi." });
@@ -100,7 +100,7 @@ export async function createProductionAction(
  * o'z joyida qoladi — mijoz kartochkasidagi tarix buzilmaydi.
  */
 export async function deleteProductAction(formData: FormData): Promise<void> {
-  const session = await requireSession();
+  const session = await requireActiveSession();
 
   const productId = String(formData.get("productId") ?? "");
   if (!productId) return;

@@ -46,6 +46,13 @@ model Company {
   name      String
   createdAt DateTime @default(now())
 
+  /// Ro'yxatdan o'tganda +30 kun
+  trialEndsAt DateTime?
+  /// To'lov qilingan sana — shu kungacha ochiq
+  paidUntil   DateTime?
+  /// Platformadan bloklangan bo'lsa
+  blockedAt   DateTime?
+
   users       User[]
   parties     Party[]
   materials   Material[]
@@ -269,4 +276,12 @@ model Expense {
   company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@index([companyId, date, deletedAt])
+}
+
+/// Platforma egasi — korxonalarni boshqaradi, ularning ichini ko'rmaydi
+model PlatformAdmin {
+  id           String   @id @default(cuid())
+  login        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
 }

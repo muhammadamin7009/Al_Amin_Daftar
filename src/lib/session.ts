@@ -1,4 +1,6 @@
 import { cookies } from "next/headers";
+import { db } from "@/lib/db";
+import { companyStatus, isActive } from "@/lib/subscription";
 import { redirect } from "next/navigation";
 import {
   SESSION_COOKIE,
@@ -41,5 +43,23 @@ export async function getSession(): Promise<Session | null> {
 export async function requireSession(): Promise<Session> {
   const session = await getSession();
   if (!session) redirect("/login");
+  return session;
+}
+
+/**
+ * Himoyalangan sahifalar shu yerdan boshlanadi: sessiya bor,
+ * korxonaning muddati ham tugamagan bo'lishi kerak.
+ */
+export async function requireActiveSession(): Promise<Session> {
+  const session = await requireSession();
+
+  const company = await db.company.findUnique({
+    where: { id: session.companyId },
+    select: { trialEndsAt: true, paidUntil: true, blockedAt: true },
+  });
+  if (!company) redirect("/login");
+
+  if (!isActive(companyStatus(company))) redirect("/tolov");
+
   return session;
 }

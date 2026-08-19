@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
-import { requireSession } from "@/lib/session";
+import { requireActiveSession } from "@/lib/session";
 import { SECTION, isKind } from "@/lib/sections";
 import { normalizePhone } from "@/lib/phone";
 import { parseMoney } from "@/lib/money";
@@ -13,7 +13,7 @@ export async function createPartyAction(
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> {
-  const session = await requireSession();
+  const session = await requireActiveSession();
 
   const kind = String(formData.get("kind") ?? "");
   if (!isKind(kind)) return fail({ form: "Bo'lim topilmadi." });

@@ -5,7 +5,7 @@ import { ScreenHeader } from "@/components/screen-header";
 import { listFolderProducts } from "@/lib/balance";
 import { formatQty, formatQtyWithUnit } from "@/lib/qty";
 import { PRODUCT_SECTION, PRODUCT_UNIT } from "@/lib/sections";
-import { requireSession } from "@/lib/session";
+import { requireActiveSession } from "@/lib/session";
 
 export default async function ProductFolderPage({
   params,
@@ -15,7 +15,7 @@ export default async function ProductFolderPage({
   const { name: raw } = await params;
   const name = decodeURIComponent(raw);
 
-  const session = await requireSession();
+  const session = await requireActiveSession();
   const products = await listFolderProducts(session.companyId, name);
   if (products.length === 0) notFound();
 

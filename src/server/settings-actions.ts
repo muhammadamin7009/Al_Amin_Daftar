@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
-import { requireSession } from "@/lib/session";
+import { requireActiveSession } from "@/lib/session";
 import { normalizePhone } from "@/lib/phone";
 import { PIN_COST } from "@/lib/auth-check";
 import { done, fail, type FormState } from "@/server/form-state";
@@ -12,7 +12,7 @@ export async function renameCompanyAction(
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> {
-  const session = await requireSession();
+  const session = await requireActiveSession();
   if (session.role !== "owner") {
     return fail({ form: "Buni faqat rahbar o'zgartira oladi." });
   }
@@ -35,7 +35,7 @@ export async function addUserAction(
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> {
-  const session = await requireSession();
+  const session = await requireActiveSession();
   if (session.role !== "owner") {
     return fail({ form: "Xodim qo'shishni faqat rahbar qila oladi." });
   }
@@ -71,7 +71,7 @@ export async function addUserAction(
 }
 
 export async function removeUserAction(formData: FormData): Promise<void> {
-  const session = await requireSession();
+  const session = await requireActiveSession();
   if (session.role !== "owner") return;
 
   const userId = String(formData.get("userId") ?? "");

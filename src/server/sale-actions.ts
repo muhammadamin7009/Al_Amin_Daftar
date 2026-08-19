@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
-import { requireSession } from "@/lib/session";
+import { requireActiveSession } from "@/lib/session";
 import { PRODUCT_SECTION, PRODUCT_UNIT, SECTION } from "@/lib/sections";
 import { isValidAmount, parseMoney } from "@/lib/money";
 import { isValidQty, parseQty } from "@/lib/qty";
@@ -16,7 +16,7 @@ export async function createSaleAction(
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> {
-  const session = await requireSession();
+  const session = await requireActiveSession();
 
   const partyId = String(formData.get("partyId") ?? "");
   if (!partyId) return fail({ form: "Mijoz topilmadi." });

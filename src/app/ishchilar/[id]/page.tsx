@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { formatMoney, formatSomAbs } from "@/lib/money";
 import { formatQtyWithUnit } from "@/lib/qty";
 import { SECTION, TONE_CLASS } from "@/lib/sections";
-import { requireSession } from "@/lib/session";
+import { requireActiveSession } from "@/lib/session";
 import { WorkerActions } from "./worker-actions";
 
 const TEXT = SECTION.ishchi;
@@ -19,7 +19,7 @@ export default async function WorkerPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const session = await requireSession();
+  const session = await requireActiveSession();
 
   const party = await db.party.findFirst({
     where: { id, companyId: session.companyId, kind: "ishchi" },

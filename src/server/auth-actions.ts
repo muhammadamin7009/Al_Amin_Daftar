@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { normalizePhone } from "@/lib/phone";
 import { startSession, endSession } from "@/lib/session";
 import { PIN_COST, verifyLogin } from "@/lib/auth-check";
+import { trialEnd } from "@/lib/subscription";
 import { WINDOW_MINUTES, lockMessage } from "@/lib/login-guard";
 
 export type AuthState = { error?: string };
@@ -83,7 +84,9 @@ export async function signupAction(
   const pinHash = await bcrypt.hash(pin, PIN_COST);
 
   const user = await db.$transaction(async (tx) => {
-    const company = await tx.company.create({ data: { name: companyName } });
+    const company = await tx.company.create({
+      data: { name: companyName, trialEndsAt: trialEnd() },
+    });
     return tx.user.create({
       data: {
         companyId: company.id,

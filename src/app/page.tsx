@@ -6,13 +6,13 @@ import { db } from "@/lib/db";
 import { formatMoney, formatSomAbs } from "@/lib/money";
 import { PRODUCT_SECTION, PRODUCT_UNIT, SECTION } from "@/lib/sections";
 import { formatQtyWithUnit } from "@/lib/qty";
-import { requireSession } from "@/lib/session";
+import { requireActiveSession } from "@/lib/session";
 import { TabBar } from "@/components/tab-bar";
 
 const AVATAR_BG = ["bg-debt-soft", "bg-paid-soft", "bg-store-soft"];
 
 export default async function HomePage() {
-  const session = await requireSession();
+  const session = await requireActiveSession();
 
   const [company, totals, cash, spent, folders, recent] = await Promise.all([
     db.company.findUnique({

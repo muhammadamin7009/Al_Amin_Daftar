@@ -6,10 +6,10 @@ import { TabBar } from "@/components/tab-bar";
 import { listProductFolders } from "@/lib/balance";
 import { formatQtyWithUnit } from "@/lib/qty";
 import { PRODUCT_SECTION, PRODUCT_UNIT } from "@/lib/sections";
-import { requireSession } from "@/lib/session";
+import { requireActiveSession } from "@/lib/session";
 
 export default async function ProductsPage() {
-  const session = await requireSession();
+  const session = await requireActiveSession();
   const folders = await listProductFolders(session.companyId);
 
   return (

@@ -1,13 +1,13 @@
 import { ScreenHeader } from "@/components/screen-header";
 import { db } from "@/lib/db";
 import { formatPhone } from "@/lib/phone";
-import { requireSession } from "@/lib/session";
+import { requireActiveSession } from "@/lib/session";
 import { logoutAction } from "@/server/auth-actions";
 import { removeUserAction } from "@/server/settings-actions";
 import { AddUser, RenameCompany } from "./settings-forms";
 
 export default async function SettingsPage() {
-  const session = await requireSession();
+  const session = await requireActiveSession();
 
   const [company, users] = await Promise.all([
     db.company.findUnique({

@@ -5,12 +5,12 @@ import { expensesTotal } from "@/lib/cash";
 import { formatDate, todayISO } from "@/lib/day";
 import { db } from "@/lib/db";
 import { formatMoney } from "@/lib/money";
-import { requireSession } from "@/lib/session";
+import { requireActiveSession } from "@/lib/session";
 import { EXPENSE_PATH } from "@/lib/expenses";
 import { ExpenseSheet } from "./expense-sheet";
 
 export default async function ExpensesPage() {
-  const session = await requireSession();
+  const session = await requireActiveSession();
 
   const [total, expenses] = await Promise.all([
     expensesTotal(session.companyId),

@@ -8,7 +8,7 @@ import { formatMoney, formatSomAbs } from "@/lib/money";
 import { formatPhone } from "@/lib/phone";
 import { formatQtyWithUnit } from "@/lib/qty";
 import { SECTION, TONE_CLASS } from "@/lib/sections";
-import { requireSession } from "@/lib/session";
+import { requireActiveSession } from "@/lib/session";
 import { SupplierActions } from "./supplier-actions";
 
 const TEXT = SECTION.taminotchi;
@@ -20,7 +20,7 @@ export default async function SupplierPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const session = await requireSession();
+  const session = await requireActiveSession();
 
   const party = await db.party.findFirst({
     where: { id, companyId: session.companyId, kind: "taminotchi" },

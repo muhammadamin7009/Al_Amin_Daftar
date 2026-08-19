@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
-import { requireSession } from "@/lib/session";
+import { requireActiveSession } from "@/lib/session";
 import { isValidAmount, parseMoney } from "@/lib/money";
 import { isUsableDate, parseISODate } from "@/lib/day";
 import { done, fail, type FormState } from "@/server/form-state";
@@ -14,7 +14,7 @@ export async function createExpenseAction(
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> {
-  const session = await requireSession();
+  const session = await requireActiveSession();
 
   const title = String(formData.get("title") ?? "").trim();
   if (title.length < 2) return fail({ title: "Nimaga sarflandi — yozing" });

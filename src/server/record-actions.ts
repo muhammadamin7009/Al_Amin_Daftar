@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
-import { requireSession } from "@/lib/session";
+import { requireActiveSession } from "@/lib/session";
 
 export type RecordType =
   | "purchase"
@@ -26,7 +26,7 @@ const TYPES: RecordType[] = [
  * companyId filtri bor: begona korxonaning yozuvi o'chmaydi.
  */
 export async function deleteRecordAction(formData: FormData): Promise<void> {
-  const session = await requireSession();
+  const session = await requireActiveSession();
 
   const type = String(formData.get("type") ?? "") as RecordType;
   const id = String(formData.get("id") ?? "");

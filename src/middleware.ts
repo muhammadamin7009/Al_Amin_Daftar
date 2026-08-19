@@ -10,6 +10,11 @@ const OPEN_PATHS = ["/offline"];
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Platforma o'zining alohida sessiyasi bilan ishlaydi
+  if (pathname === "/platform" || pathname.startsWith("/platform/")) {
+    return NextResponse.next();
+  }
+
   if (OPEN_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
     return NextResponse.next();
   }

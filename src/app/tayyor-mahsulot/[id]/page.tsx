@@ -8,7 +8,7 @@ import { formatDate, todayISO } from "@/lib/day";
 import { db } from "@/lib/db";
 import { formatQty, formatQtyWithUnit } from "@/lib/qty";
 import { PRODUCT_SECTION } from "@/lib/sections";
-import { requireSession } from "@/lib/session";
+import { requireActiveSession } from "@/lib/session";
 
 export default async function ProductPage({
   params,
@@ -16,7 +16,7 @@ export default async function ProductPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const session = await requireSession();
+  const session = await requireActiveSession();
 
   const product = await db.product.findFirst({
     where: { id, companyId: session.companyId, deletedAt: null },

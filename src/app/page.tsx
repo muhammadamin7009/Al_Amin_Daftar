@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { homeTotals, listProducts } from "@/lib/balance";
-import { cashOnHand, initials, recentParties } from "@/lib/cash";
+import { cashOnHand, expensesTotal, initials, recentParties } from "@/lib/cash";
 import { db } from "@/lib/db";
 import { formatMoney, formatSomAbs } from "@/lib/money";
 import { PRODUCT_SECTION, SECTION } from "@/lib/sections";
@@ -12,13 +12,14 @@ const AVATAR_BG = ["bg-debt-soft", "bg-paid-soft", "bg-store-soft"];
 export default async function HomePage() {
   const session = await requireSession();
 
-  const [company, totals, cash, products, recent] = await Promise.all([
+  const [company, totals, cash, spent, products, recent] = await Promise.all([
     db.company.findUnique({
       where: { id: session.companyId },
       select: { name: true },
     }),
     homeTotals(session.companyId),
     cashOnHand(session.companyId),
+    expensesTotal(session.companyId),
     listProducts(session.companyId),
     recentParties(session.companyId),
   ]);
@@ -122,9 +123,19 @@ export default async function HomePage() {
         <span className="h-4 w-4 rounded-full bg-paid" />
         <span className="text-base text-muted">Kassada, so'm</span>
       </div>
-      <p className="mt-2 text-base text-faint">
-        Bu — daftarga yozilgan pul. Elektr, ijara kabi harajatlar bunga kirmaydi.
-      </p>
+
+      <Link
+        href="/xarajatlar"
+        className="mt-3 flex min-h-13 items-center justify-between gap-3 rounded-2xl bg-debt-soft px-4 active:opacity-70"
+      >
+        <span className="text-base text-muted">Xarajatlar</span>
+        <span className="flex items-center gap-2">
+          <span className="num text-lg font-bold text-debt">
+            {formatMoney(spent.toString())}
+          </span>
+          <span className="text-xl text-faint">›</span>
+        </span>
+      </Link>
 
       <p className="mb-3 mt-7 text-base text-faint">Bo'limlar</p>
 

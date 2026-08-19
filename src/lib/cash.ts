@@ -5,12 +5,11 @@ import type { Kind } from "@/lib/sections";
 const ZERO = new Prisma.Decimal(0);
 
 /**
- * Kassa = olingan pullar − berilgan pullar.
- * DIQQAT: elektr, ijara, benzin kabi harajatlar dasturga yozilmaydi,
- * shuning uchun bu raqam "daftarda ko'ringan pul", seyfdagi pul emas.
+ * Kassa = olingan pullar − berilgan pullar − xarajatlar.
+ * Xarajat (elektr, ijara, benzin) yozib borilsa raqam seyfdagi pulga to'g'ri keladi.
  */
 export async function cashOnHand(companyId: string): Promise<Prisma.Decimal> {
-  const [taken, given] = await Promise.all([
+  const [taken, given, spent] = await Promise.all([
     db.payment.aggregate({
       where: { companyId, deletedAt: null, direction: "kirim" },
       _sum: { amount: true },
@@ -19,9 +18,26 @@ export async function cashOnHand(companyId: string): Promise<Prisma.Decimal> {
       where: { companyId, deletedAt: null, direction: "chiqim" },
       _sum: { amount: true },
     }),
+    db.expense.aggregate({
+      where: { companyId, deletedAt: null },
+      _sum: { amount: true },
+    }),
   ]);
 
-  return (taken._sum.amount ?? ZERO).minus(given._sum.amount ?? ZERO);
+  return (taken._sum.amount ?? ZERO)
+    .minus(given._sum.amount ?? ZERO)
+    .minus(spent._sum.amount ?? ZERO);
+}
+
+/** Xarajatlar jami */
+export async function expensesTotal(
+  companyId: string,
+): Promise<Prisma.Decimal> {
+  const spent = await db.expense.aggregate({
+    where: { companyId, deletedAt: null },
+    _sum: { amount: true },
+  });
+  return spent._sum.amount ?? ZERO;
 }
 
 export type RecentParty = { id: string; name: string; kind: Kind };

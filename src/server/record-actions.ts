@@ -9,7 +9,8 @@ export type RecordType =
   | "sale"
   | "payment"
   | "production"
-  | "work";
+  | "work"
+  | "expense";
 
 const TYPES: RecordType[] = [
   "purchase",
@@ -17,6 +18,7 @@ const TYPES: RecordType[] = [
   "payment",
   "production",
   "work",
+  "expense",
 ];
 
 /**
@@ -49,6 +51,9 @@ export async function deleteRecordAction(formData: FormData): Promise<void> {
       break;
     case "work":
       await db.workEntry.updateMany({ where, data });
+      break;
+    case "expense":
+      await db.expense.updateMany({ where, data });
       break;
   }
 

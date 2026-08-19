@@ -54,6 +54,7 @@ model Company {
   payments    Payment[]
   productions Production[]
   workEntries WorkEntry[]
+  expenses    Expense[]
 }
 
 model User {
@@ -249,4 +250,21 @@ model WorkEntry {
 
   @@index([companyId, partyId, deletedAt])
   @@index([companyId, date])
+}
+
+/// Elektr, ijara, benzin — kassadan chiqadigan, hech kimga bog'liq bo'lmagan pul
+model Expense {
+  id        String    @id @default(cuid())
+  companyId String
+  title     String
+  amount    Decimal   @db.Decimal(18, 2)
+  date      DateTime  @db.Date
+  note      String?
+  createdBy String
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, date, deletedAt])
 }

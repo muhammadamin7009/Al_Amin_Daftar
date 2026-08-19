@@ -117,7 +117,7 @@ export function WorkSheet({
             items={products}
             value={work}
             onChange={setWork}
-            placeholder="Mahsulot yoki: Tikuv"
+            placeholder="Parda yoki: Tikuv"
             createAs="label"
             invalid={!!errors.work}
           />

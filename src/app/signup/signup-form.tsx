@@ -120,7 +120,7 @@ export function SignupForm() {
               id="company-input"
               type="text"
               autoFocus
-              placeholder="Masalan: Baraka charm"
+              placeholder="Masalan: Baraka parda"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
               onKeyDown={onInfoKeyDown}

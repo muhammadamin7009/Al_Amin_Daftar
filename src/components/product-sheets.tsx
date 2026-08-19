@@ -20,7 +20,7 @@ export function NewProductSheet() {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [unit, setUnit] = useState<UnitValue>("dona");
+  const [unit, setUnit] = useState<UnitValue>("metr");
   const [price, setPrice] = useState("");
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export function NewProductSheet() {
               name="name"
               value={name}
               onChange={setName}
-              placeholder="Masalan: Zer Oring"
+              placeholder="Masalan: Tyul parda"
               invalid={!!errors.name}
               autoFocus
             />
@@ -75,7 +75,7 @@ export function NewProductSheet() {
               name="description"
               rows={2}
               maxLength={200}
-              placeholder="Masalan: Qora charm, 42-45 o'lcham"
+              placeholder="Masalan: Oq tyul, 3 metr eni"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="field py-3"

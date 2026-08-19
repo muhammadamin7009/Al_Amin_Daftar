@@ -103,7 +103,8 @@ model Product {
   description String?
   unit        Unit     @default(par)
   price       Decimal? @db.Decimal(18, 2)
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
+  deletedAt   DateTime?
 
   company     Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
   sales       Sale[]

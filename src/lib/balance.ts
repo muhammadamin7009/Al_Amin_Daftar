@@ -159,7 +159,7 @@ export type ProductRow = {
 
 export async function listProducts(companyId: string): Promise<ProductRow[]> {
   const products = await db.product.findMany({
-    where: { companyId },
+    where: { companyId, deletedAt: null },
     orderBy: { name: "asc" },
     select: {
       id: true,

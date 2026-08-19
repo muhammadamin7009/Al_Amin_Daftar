@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { HistoryList, type HistoryRow } from "@/components/history-list";
+import { DeleteProduct } from "@/components/delete-product";
 import { ProductionSheet } from "@/components/product-sheets";
 import { ScreenHeader } from "@/components/screen-header";
 import { productStock } from "@/lib/balance";
@@ -18,7 +19,7 @@ export default async function ProductPage({
   const session = await requireSession();
 
   const product = await db.product.findFirst({
-    where: { id, companyId: session.companyId },
+    where: { id, companyId: session.companyId, deletedAt: null },
     select: { id: true, name: true, description: true, unit: true },
   });
   if (!product) notFound();
@@ -121,6 +122,8 @@ export default async function ProductPage({
 
       <h2 className="mb-3 text-lg font-semibold">Tarix</h2>
       <HistoryList rows={rows} path={`${PRODUCT_SECTION.path}/${product.id}`} />
+
+      <DeleteProduct productId={product.id} recordCount={rows.length} />
     </main>
   );
 }

@@ -55,7 +55,7 @@ export async function createSaleAction(
 
     if (usedProductId) {
       const product = await tx.product.findFirst({
-        where: { id: usedProductId, companyId: session.companyId },
+        where: { id: usedProductId, companyId: session.companyId, deletedAt: null },
         select: { id: true },
       });
       if (!product) throw new Error("mahsulot-topilmadi");

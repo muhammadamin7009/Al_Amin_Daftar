@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
@@ -73,7 +74,7 @@ export async function createProductionAction(
   }
 
   const product = await db.product.findFirst({
-    where: { id: productId, companyId: session.companyId },
+    where: { id: productId, companyId: session.companyId, deletedAt: null },
     select: { id: true },
   });
   if (!product) return fail({ form: "Mahsulot topilmadi." });
@@ -92,4 +93,31 @@ export async function createProductionAction(
   revalidatePath(`${PRODUCT_SECTION.path}/${product.id}`);
   revalidatePath(PRODUCT_SECTION.path);
   return done();
+}
+
+/**
+ * Modelni ro'yxatdan olib tashlash. Ishlab chiqarish va sotuv yozuvlari
+ * o'z joyida qoladi — mijoz kartochkasidagi tarix buzilmaydi.
+ */
+export async function deleteProductAction(formData: FormData): Promise<void> {
+  const session = await requireSession();
+
+  const productId = String(formData.get("productId") ?? "");
+  if (!productId) return;
+
+  const product = await db.product.findFirst({
+    where: { id: productId, companyId: session.companyId, deletedAt: null },
+    select: { id: true, name: true },
+  });
+  if (!product) return;
+
+  await db.product.update({
+    where: { id: product.id },
+    data: { deletedAt: new Date() },
+  });
+
+  revalidatePath(PRODUCT_SECTION.path);
+  revalidatePath(`${PRODUCT_SECTION.path}/papka/${encodeURIComponent(product.name)}`);
+  revalidatePath("/");
+  redirect(PRODUCT_SECTION.path);
 }

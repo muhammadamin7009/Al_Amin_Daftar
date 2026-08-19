@@ -71,7 +71,7 @@ export default async function WorkerPage({
       take: 200,
     }),
     db.product.findMany({
-      where: { companyId: session.companyId },
+      where: { companyId: session.companyId, deletedAt: null },
       orderBy: { name: "asc" },
       select: { id: true, name: true, unit: true },
     }),

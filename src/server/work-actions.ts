@@ -76,7 +76,7 @@ export async function createWorkAction(
 
   if (productId) {
     const product = await db.product.findFirst({
-      where: { id: productId, companyId: session.companyId },
+      where: { id: productId, companyId: session.companyId, deletedAt: null },
       select: { id: true },
     });
     if (!product) return fail({ work: "Mahsulot topilmadi" });

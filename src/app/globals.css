@@ -31,6 +31,22 @@
   /* Pastki paneldagi tanlangan bo'lim */
   --color-active: #2b4bd8;
 
+
+  /* Platforma paneli — o'zining to'q dunyosi, dastur ranglaridan ajralib turadi */
+  --color-plat-bg: #0e1013;
+  --color-plat-panel: #16191d;
+  --color-plat-raise: #1d2126;
+  --color-plat-line: #262b31;
+  --color-plat-ink: #eceff2;
+  --color-plat-muted: #99a2ab;
+  --color-plat-faint: #6b747d;
+  --color-plat-accent: #c9a86a;
+  --color-plat-live: #7fbf6a;
+  --color-plat-warn: #e0a35c;
+  --color-plat-dead: #d98a7c;
+
+  --font-serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+
   --font-sans:
     system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
     sans-serif;

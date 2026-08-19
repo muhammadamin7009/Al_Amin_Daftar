@@ -11,6 +11,13 @@ FROM node:22-slim AS builder
 RUN apt-get update && apt-get install -y --no-install-recommends openssl \
   && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
+
+# Yig'ish paytida haqiqiy baza kerak emas, lekin o'zgaruvchi bo'lishi kerak —
+# aks holda Prisma mijozi yaratilayotganda xato beradi. Ishlaganda
+# docker compose haqiqiy qiymatni beradi.
+ENV DATABASE_URL="postgresql://build:build@localhost:5432/build?schema=public"
+ENV SESSION_SECRET="faqat-yigish-uchun-kamida-32-belgi-boladigan-satr"
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npx prisma generate && npm run build

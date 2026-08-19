@@ -28,7 +28,7 @@ services:
     ports:
       - "127.0.0.1:3000:3000"
     command: >
-      sh -c "npx prisma migrate deploy && node server.js"
+      sh -c "node node_modules/prisma/build/index.js migrate deploy && node server.js"
 
 volumes:
   db-data:

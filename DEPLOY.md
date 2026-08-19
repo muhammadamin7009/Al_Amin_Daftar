@@ -10,21 +10,45 @@ Quyida `DOMEN` deb yozilgan joyga o'z domeningizni qo'ying
 
 ## 1. Domenni serverga yo'naltirish
 
-Domen boshqaruvida **A yozuv** qo'shing:
+Domen **eskiz.uz** da ro'yxatdan o'tgan. Ikki yo'l bor — bittasini tanlang.
+
+### A yo'l: DNS eskizda qoladi (soddasi)
+
+Eskiz kabinetiga kiring → domen → **DNS boshqaruvi** → yangi yozuv qo'shing:
+
+| Turi | Nom | Qiymat | TTL |
+|---|---|---|---|
+| A | `daftar` | droplet IP manzili | 3600 |
+
+Natija: `daftar.al-amin.uz`.
+
+Butun domenni shu dasturga bermoqchi bo'lsangiz, nom o'rniga `@` qo'ying —
+u holda `al-amin.uz` ning o'zi ochiladi. Lekin domen boshqa loyihangizda
+ishlayotgan bo'lsa unga tegmang, subdomen olib qo'ya qoling.
+
+### B yo'l: DNS DigitalOcean'ga o'tadi
+
+Eskizda domenning **NS yozuvlarini** DigitalOcean'nikiga almashtirasiz:
 
 ```
-Turi   Nom      Qiymat
-A      daftar   <droplet IP manzili>
+ns1.digitalocean.com
+ns2.digitalocean.com
+ns3.digitalocean.com
 ```
 
-Tekshirish (o'z kompyuteringizdan):
+Keyin yozuvlar DigitalOcean panelida boshqariladi. Bir nechta xizmat
+qo'shsangiz qulayroq, lekin NS o'zgarishi bir necha soat oladi va shu
+vaqt ichida domen tebranib turadi.
+
+### Tekshirish
 
 ```bash
-ping daftar.al-amin.uz
+nslookup daftar.al-amin.uz
 ```
 
-IP to'g'ri chiqsa, keyingi qadamga o'ting. DNS tarqalishi 5 daqiqadan
-bir necha soatgacha vaqt oladi.
+Droplet IP chiqsa keyingi qadamga o'ting. DNS tarqalishi 10 daqiqadan
+bir necha soatgacha vaqt oladi. Sertifikat olishdan **oldin** shu
+tekshiruv albatta o'tishi kerak — aks holda certbot xato beradi.
 
 ---
 
@@ -178,3 +202,5 @@ docker compose logs -f db
 - `SESSION_SECRET` almashtirilsa hamma foydalanuvchi tizimdan chiqib
   qoladi — qayta kirishlari kerak bo'ladi.
 - Namuna ma'lumot (`npm run db:seed`) haqiqiy serverda **ishlatilmasin**.
+- Backup'ni vaqti-vaqti bilan boshqa joyga ko'chirib turing. Droplet
+  o'chib qolsa, uning ichidagi nusxa ham birga yo'qoladi.

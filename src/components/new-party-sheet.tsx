@@ -36,13 +36,8 @@ export function NewPartySheet({ kind }: { kind: Kind }) {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label={text.addTitle}
-        className="fixed bottom-6 right-6 z-40 flex h-16 w-16 items-center justify-center rounded-full bg-ink text-4xl text-white shadow-lg active:translate-y-px"
-      >
-        +
+      <button type="button" onClick={() => setOpen(true)} className="btn-dark mt-6">
+        + Yangi qo'shish
       </button>
 
       <BottomSheet open={open} onClose={() => setOpen(false)} title={text.addTitle}>
@@ -50,7 +45,7 @@ export function NewPartySheet({ kind }: { kind: Kind }) {
           <input type="hidden" name="kind" value={kind} />
 
           {errors.form ? (
-            <p className="rounded-xl bg-debt-soft px-4 py-3 text-base text-debt">
+            <p className="rounded-2xl bg-debt-soft px-4 py-3 text-base text-debt">
               {errors.form}
             </p>
           ) : null}
@@ -73,7 +68,7 @@ export function NewPartySheet({ kind }: { kind: Kind }) {
             error={errors.phone}
           >
             <div className="flex items-center gap-2">
-              <span className="shrink-0 text-xl text-muted">+998</span>
+              <span className="shrink-0 text-lg text-muted">+998</span>
               <input
                 id="party-phone"
                 name="phone"
@@ -98,10 +93,10 @@ export function NewPartySheet({ kind }: { kind: Kind }) {
                       key={value}
                       type="button"
                       onClick={() => setPayType(value)}
-                      className={`btn border-2 ${
+                      className={`btn border-[1.5px] ${
                         payType === value
                           ? "border-ink bg-ink text-white"
-                          : "border-line bg-paper"
+                          : "border-edge bg-paper"
                       }`}
                     >
                       {value === "ishbay" ? "Ishbay" : "Oylik"}
@@ -126,38 +121,30 @@ export function NewPartySheet({ kind }: { kind: Kind }) {
                 />
               </FieldShell>
             </>
-          ) : (
-            <FieldShell
-              label="Boshlang'ich qarz — shart emas"
-              htmlFor="party-opening"
-              error={errors.openingBalance}
-              hint={text.currentLabel + "ni bilmasangiz bo'sh qoldiring."}
-            >
-              <MoneyInput
-                id="party-opening"
-                name="openingBalance"
-                value={opening}
-                onChange={setOpening}
-                invalid={!!errors.openingBalance}
-              />
-            </FieldShell>
-          )}
-
-          {kind === "ishchi" ? (
-            <FieldShell
-              label="Boshlang'ich qoldiq — shart emas"
-              htmlFor="party-opening"
-              error={errors.openingBalance}
-            >
-              <MoneyInput
-                id="party-opening"
-                name="openingBalance"
-                value={opening}
-                onChange={setOpening}
-                invalid={!!errors.openingBalance}
-              />
-            </FieldShell>
           ) : null}
+
+          <FieldShell
+            label={
+              kind === "ishchi"
+                ? "Boshlang'ich qoldiq — shart emas"
+                : "Boshlang'ich qarz — shart emas"
+            }
+            htmlFor="party-opening"
+            error={errors.openingBalance}
+            hint={
+              kind === "ishchi"
+                ? undefined
+                : "Bilmasangiz bo'sh qoldiring, keyin to'g'rilasa bo'ladi."
+            }
+          >
+            <MoneyInput
+              id="party-opening"
+              name="openingBalance"
+              value={opening}
+              onChange={setOpening}
+              invalid={!!errors.openingBalance}
+            />
+          </FieldShell>
 
           <SheetActions pending={pending} onCancel={() => setOpen(false)} />
         </form>

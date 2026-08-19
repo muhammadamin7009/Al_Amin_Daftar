@@ -125,11 +125,11 @@ export default async function WorkerPage({
         subtitle={payType === "oylik" ? "Oylik" : "Ishbay"}
       />
 
-      <section className={`mb-6 rounded-xl px-5 py-6 text-center ${TONE.soft}`}>
+      <section className={`mb-6 rounded-2xl px-5 py-7 text-center ${TONE.soft}`}>
         <p className="text-base text-muted">
           {negative ? "Ortiqcha berilgan" : TEXT.currentLabel}
         </p>
-        <p className={`mt-1 text-4xl font-bold ${TONE.text}`}>
+        <p className={`mt-1 num text-4xl font-bold tracking-tight ${TONE.text}`}>
           {formatSomAbs(balance.toString())}
         </p>
       </section>

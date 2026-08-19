@@ -1,12 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  /* Daftar rangi: oq qog'oz, qora siyoh */
+  /* Oq qog'oz, yumshoq fonlar */
   --color-paper: #ffffff;
-  --color-page: #f4f4f5;
-  --color-ink: #18181b;
-  --color-muted: #71717a;
-  --color-line: #d4d4d8;
+  --color-page: #ffffff;
+  --color-ink: #16181a;
+  --color-muted: #6e747a;
+  --color-faint: #8a9096;
+  --color-line: #f0f1f2;
+  --color-edge: #e6e8ea;
 
   /* Mening qarzim — qizil */
   --color-debt: #501313;
@@ -16,13 +18,18 @@
   --color-paid: #173404;
   --color-paid-soft: #eaf3de;
 
-  /* Ishchilar va ombor — kulrang */
-  --color-worker: #3f3f46;
-  --color-worker-soft: #e4e4e7;
+  /* Ombor va ishchilar */
+  --color-store: #3b3455;
+  --color-store-soft: #f3f1fa;
+  --color-worker: #2f3d4a;
+  --color-worker-soft: #eef2f6;
 
   /* Ogohlantirish */
   --color-warn: #713f12;
   --color-warn-soft: #fef3c7;
+
+  /* Pastki paneldagi tanlangan bo'lim */
+  --color-active: #2b4bd8;
 
   --font-sans:
     system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
@@ -30,8 +37,7 @@
 }
 
 html {
-  /* Katta shrift — sexda, telefonda, ko'zoynaksiz o'qiladi */
-  font-size: 18px;
+  font-size: 17px;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -41,21 +47,37 @@ body {
   font-family: var(--font-sans);
 }
 
-/* Foydalanuvchi barmog'i katta: hamma bosiladigan narsa kamida 48px */
+/* Raqamlar ustma-ust tekis tursin */
+.num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 @layer components {
+  /* Tugmalar dumaloq, kamida 52px */
   .btn {
-    @apply flex min-h-14 w-full items-center justify-center gap-2
-           rounded-xl px-5 text-lg font-semibold
+    @apply flex min-h-13 w-full items-center justify-center gap-2
+           rounded-full px-6 text-lg font-semibold
+           active:translate-y-px disabled:opacity-40;
+  }
+
+  .btn-dark {
+    @apply flex min-h-13 w-full items-center justify-center gap-2
+           rounded-full bg-ink px-6 text-lg font-semibold text-white
            active:translate-y-px disabled:opacity-40;
   }
 
   .card {
-    @apply rounded-xl border border-line bg-paper;
+    @apply rounded-2xl border border-line bg-paper;
+  }
+
+  .tile {
+    @apply rounded-2xl p-4;
   }
 
   .field {
-    @apply min-h-14 w-full rounded-xl border-2 border-line bg-paper
-           px-4 text-xl outline-none focus:border-ink;
+    @apply min-h-13 w-full rounded-2xl border-[1.5px] border-edge bg-paper
+           px-4 text-lg outline-none focus:border-ink;
   }
 
   .field-error {
@@ -63,7 +85,7 @@ body {
   }
 
   .label {
-    @apply mb-2 block text-base font-medium text-muted;
+    @apply mb-2 block text-base text-faint;
   }
 
   .hint {
@@ -72,6 +94,12 @@ body {
 
   .error-text {
     @apply mt-2 text-base text-debt;
+  }
+
+  /* Ro'yxat qatori */
+  .row {
+    @apply flex min-h-15 items-center justify-between gap-3
+           border-b border-line py-3 last:border-0;
   }
 }
 

@@ -6,6 +6,7 @@ import { ScreenHeader } from "@/components/screen-header";
 import { listParties } from "@/lib/balance";
 import { SECTION, TONE_CLASS } from "@/lib/sections";
 import { requireSession } from "@/lib/session";
+import { TabBar } from "@/components/tab-bar";
 
 const TEXT = SECTION.mijoz;
 const TONE = TONE_CLASS.paid;
@@ -20,7 +21,7 @@ export default async function CustomersPage() {
   );
 
   return (
-    <main className="mx-auto max-w-md p-5 pb-28">
+    <main className="mx-auto max-w-md p-5 pb-32">
       <ScreenHeader title={TEXT.title} backHref="/" />
 
       <TotalHeader
@@ -46,6 +47,7 @@ export default async function CustomersPage() {
       )}
 
       <NewPartySheet kind="mijoz" />
+      <TabBar current="mijoz" />
     </main>
   );
 }

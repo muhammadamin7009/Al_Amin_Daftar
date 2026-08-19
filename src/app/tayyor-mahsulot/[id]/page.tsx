@@ -103,10 +103,10 @@ export default async function ProductPage({
         subtitle={product.description ?? undefined}
       />
 
-      <section className="card mb-6 px-5 py-6 text-center">
+      <section className="mb-6 rounded-2xl bg-store-soft px-5 py-7 text-center">
         <p className="text-base text-muted">Omborda</p>
         <p
-          className={`mt-1 text-4xl font-bold ${empty ? "text-muted" : "text-ink"}`}
+          className={`mt-1 num text-4xl font-bold tracking-tight ${empty ? "text-muted" : "text-ink"}`}
         >
           {formatQtyWithUnit(stock.toString(), product.unit)}
         </p>

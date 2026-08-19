@@ -40,9 +40,9 @@ export function NewProductSheet() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label={PRODUCT_SECTION.addTitle}
-        className="fixed bottom-6 right-6 z-40 flex h-16 w-16 items-center justify-center rounded-full bg-ink text-4xl text-white shadow-lg active:translate-y-px"
+        className="btn-dark mt-6"
       >
-        +
+        + Yangi model
       </button>
 
       <BottomSheet

@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useState } from "react";
 import { BottomSheet, SheetActions } from "@/components/bottom-sheet";
 import { DateField, FieldShell, MoneyInput, QtyInput, TextField } from "@/components/fields";
-import { PRODUCT_SECTION, UNITS, type UnitValue } from "@/lib/sections";
+import { PRODUCT_SECTION } from "@/lib/sections";
 import {
   createProductAction,
   createProductionAction,
@@ -20,7 +20,6 @@ export function NewProductSheet() {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [unit, setUnit] = useState<UnitValue>("dona");
   const [price, setPrice] = useState("");
 
   useEffect(() => {
@@ -28,7 +27,6 @@ export function NewProductSheet() {
     setOpen(false);
     setName("");
     setDescription("");
-    setUnit("dona");
     setPrice("");
   }, [state]);
 
@@ -82,25 +80,6 @@ export function NewProductSheet() {
             />
           </FieldShell>
 
-          <FieldShell label="O'lchov birligi" error={errors.unit}>
-            <input type="hidden" name="unit" value={unit} />
-            <div className="grid grid-cols-4 gap-2">
-              {UNITS.map((value) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setUnit(value)}
-                  className={`min-h-14 rounded-xl border-2 text-lg font-semibold ${
-                    unit === value
-                      ? "border-ink bg-ink text-white"
-                      : "border-line bg-paper"
-                  }`}
-                >
-                  {value}
-                </button>
-              ))}
-            </div>
-          </FieldShell>
 
           <FieldShell
             label="Sotuv narxi — shart emas"

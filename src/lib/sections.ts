@@ -11,7 +11,10 @@ export function isKind(value: string): value is Kind {
   return (KINDS as readonly string[]).includes(value);
 }
 
-export const UNITS = ["dona", "kg", "metr", "dis"] as const;
+export const UNITS = ["par", "dona", "kg", "metr", "dis"] as const;
+
+/** Tayyor mahsulot har doim par bilan sanaladi — tanlash so'ralmaydi */
+export const PRODUCT_UNIT = "par" as const;
 export type UnitValue = (typeof UNITS)[number];
 
 export function isUnit(value: string): value is UnitValue {

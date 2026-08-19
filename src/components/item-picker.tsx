@@ -45,7 +45,9 @@ type Props = {
    * unit  — yangi nom kiritilsa o'lchov birligi so'raladi va ro'yxatga qo'shiladi
    * label — yangi nom shunchaki matn bo'lib qoladi, hech narsa yaratilmaydi
    */
-  createAs?: "unit" | "label";
+  createAs?: "unit" | "label" | "fixed";
+  /** createAs="fixed" bo'lganda: o'lchov birligi so'ralmaydi, shu qiymat olinadi */
+  fixedUnit?: UnitValue;
 };
 
 const MAX_SHOWN = 8;
@@ -62,6 +64,7 @@ export function ItemPicker({
   placeholder,
   invalid,
   createAs = "unit",
+  fixedUnit = "dona",
 }: Props) {
   const [query, setQuery] = useState("");
   const [creatingName, setCreatingName] = useState<string | null>(null);
@@ -123,7 +126,7 @@ export function ItemPicker({
     return (
       <div className="rounded-xl border-2 border-line bg-paper p-4">
         <p className="mb-3 text-base">«{creatingName}» nima bilan o'lchanadi?</p>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="flex flex-wrap gap-2">
           {UNITS.map((unit) => (
             <button
               key={unit}
@@ -132,7 +135,7 @@ export function ItemPicker({
                 onChange({ mode: "new", name: creatingName, unit });
                 setCreatingName(null);
               }}
-              className="min-h-14 rounded-xl border-2 border-line text-lg font-semibold active:bg-page"
+              className="min-h-14 flex-1 rounded-xl border-2 border-line px-4 text-lg font-semibold active:bg-page"
             >
               {unit}
             </button>
@@ -194,6 +197,8 @@ export function ItemPicker({
                   const trimmed = query.trim();
                   if (createAs === "label") {
                     onChange({ mode: "label", name: trimmed });
+                  } else if (createAs === "fixed") {
+                    onChange({ mode: "new", name: trimmed, unit: fixedUnit });
                   } else {
                     setCreatingName(trimmed);
                   }

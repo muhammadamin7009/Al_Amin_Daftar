@@ -11,6 +11,7 @@ import {
   type PickerValue,
 } from "@/components/item-picker";
 import { formatQty, previewTotal } from "@/lib/qty";
+import { PRODUCT_UNIT } from "@/lib/sections";
 import { createSaleAction } from "@/server/sale-actions";
 import type { FormState } from "@/server/form-state";
 
@@ -77,6 +78,8 @@ export function SaleSheet({ open, onClose, partyId, products, today }: Props) {
               if (next?.mode === "existing" && next.price) setPrice(next.price);
             }}
             placeholder="Mahsulot nomi"
+            createAs="fixed"
+            fixedUnit={PRODUCT_UNIT}
             invalid={!!errors.product}
           />
         </FieldShell>

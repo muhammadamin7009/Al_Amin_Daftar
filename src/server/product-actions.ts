@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
-import { PRODUCT_SECTION, isUnit } from "@/lib/sections";
+import { PRODUCT_SECTION, PRODUCT_UNIT } from "@/lib/sections";
 import { parseMoney } from "@/lib/money";
 import { isValidQty, parseQty } from "@/lib/qty";
 import { isUsableDate, parseISODate } from "@/lib/day";
@@ -23,8 +23,6 @@ export async function createProductAction(
   const description =
     String(formData.get("description") ?? "").trim().slice(0, 200) || null;
 
-  const unit = String(formData.get("unit") ?? "");
-  if (!isUnit(unit)) return fail({ unit: "O'lchov birligini tanlang" });
 
   const priceRaw = parseMoney(String(formData.get("price") ?? ""));
   if (priceRaw && !/^\d{1,15}$/.test(priceRaw)) {
@@ -36,7 +34,7 @@ export async function createProductAction(
       companyId: session.companyId,
       name,
       description,
-      unit,
+      unit: PRODUCT_UNIT,
       price: priceRaw ? new Prisma.Decimal(priceRaw) : null,
     },
   });

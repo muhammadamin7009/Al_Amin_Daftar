@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
-import { PRODUCT_SECTION, SECTION, isUnit } from "@/lib/sections";
+import { PRODUCT_SECTION, PRODUCT_UNIT, SECTION } from "@/lib/sections";
 import { isValidAmount, parseMoney } from "@/lib/money";
 import { isValidQty, parseQty } from "@/lib/qty";
 import { isUsableDate, parseISODate } from "@/lib/day";
@@ -23,11 +23,7 @@ export async function createSaleAction(
 
   const productId = String(formData.get("productId") ?? "");
   const newName = String(formData.get("productNewName") ?? "").trim();
-  const newUnit = String(formData.get("productNewUnit") ?? "");
   if (!productId && !newName) return fail({ product: "Mahsulotni tanlang" });
-  if (!productId && !isUnit(newUnit)) {
-    return fail({ product: "O'lchov birligini tanlang" });
-  }
 
   const qty = parseQty(String(formData.get("qty") ?? ""));
   if (!qty) return fail({ qty: "Miqdorni kiriting" });
@@ -68,7 +64,7 @@ export async function createSaleAction(
         data: {
           companyId: session.companyId,
           name: newName,
-          unit: isUnit(newUnit) ? newUnit : "dona",
+          unit: PRODUCT_UNIT,
         },
       });
       usedProductId = created.id;

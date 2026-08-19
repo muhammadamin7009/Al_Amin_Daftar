@@ -19,6 +19,7 @@ enum PartyKind {
 }
 
 enum Unit {
+  par
   dona
   kg
   metr
@@ -100,7 +101,7 @@ model Product {
   companyId   String
   name        String
   description String?
-  unit        Unit     @default(dona)
+  unit        Unit     @default(par)
   price       Decimal? @db.Decimal(18, 2)
   createdAt   DateTime @default(now())
 

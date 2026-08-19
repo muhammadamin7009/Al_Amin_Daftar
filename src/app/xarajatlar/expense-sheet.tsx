@@ -50,7 +50,7 @@ export function ExpenseSheet({ today }: { today: string }) {
               name="title"
               value={title}
               onChange={setTitle}
-              placeholder="Masalan: Elektr"
+              placeholder="Xarajat nomi"
               invalid={!!errors.title}
               autoFocus
             />

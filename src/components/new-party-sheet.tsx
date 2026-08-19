@@ -56,7 +56,7 @@ export function NewPartySheet({ kind }: { kind: Kind }) {
               name="name"
               value={name}
               onChange={setName}
-              placeholder="Masalan: Akmal aka"
+              placeholder="Ismi yoki korxona nomi"
               invalid={!!errors.name}
               autoFocus
             />

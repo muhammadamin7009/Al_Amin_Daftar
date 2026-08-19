@@ -120,7 +120,7 @@ export function AddUser() {
               name="name"
               value={name}
               onChange={setName}
-              placeholder="Masalan: Sardor"
+              placeholder="Xodim ismi"
               invalid={!!errors.name}
               autoFocus
             />

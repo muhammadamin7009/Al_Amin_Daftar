@@ -136,7 +136,7 @@ export function PaymentSheet({
             value={note}
             onChange={setNote}
             maxLength={100}
-            placeholder="Masalan: naqd"
+            placeholder="Izoh"
           />
         </FieldShell>
 

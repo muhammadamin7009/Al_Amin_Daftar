@@ -76,7 +76,7 @@ export function SaleSheet({ open, onClose, partyId, products, today }: Props) {
               // Sotuv narxi sozlamada bo'lsa o'zi qo'yiladi
               if (next?.mode === "existing" && next.price) setPrice(next.price);
             }}
-            placeholder="Masalan: Tyul parda"
+            placeholder="Mahsulot nomi"
             invalid={!!errors.product}
           />
         </FieldShell>

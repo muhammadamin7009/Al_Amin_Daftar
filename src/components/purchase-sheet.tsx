@@ -69,7 +69,7 @@ export function PurchaseSheet({
             items={materials}
             value={material}
             onChange={setMaterial}
-            placeholder="Masalan: tyul mato"
+            placeholder="Xom ashyo nomi"
             invalid={!!errors.material}
           />
         </FieldShell>

@@ -1,0 +1,252 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  owner
+  xodim
+}
+
+enum PartyKind {
+  taminotchi
+  mijoz
+  ishchi
+}
+
+enum Unit {
+  dona
+  kg
+  metr
+  dis
+}
+
+enum PayType {
+  ishbay
+  oylik
+}
+
+enum PaymentDirection {
+  kirim
+  chiqim
+}
+
+enum PaymentKind {
+  avans
+  oylik
+}
+
+model Company {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  users       User[]
+  parties     Party[]
+  materials   Material[]
+  products    Product[]
+  purchases   Purchase[]
+  sales       Sale[]
+  payments    Payment[]
+  productions Production[]
+  workEntries WorkEntry[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  companyId String
+  name      String
+  phone     String   @unique
+  pinHash   String
+  role      Role     @default(xodim)
+  createdAt DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+}
+
+model LoginAttempt {
+  id    String   @id @default(cuid())
+  phone String
+  at    DateTime @default(now())
+  ok    Boolean
+
+  @@index([phone, at])
+}
+
+/// Xom ashyo turi: charm, ip, yelim...
+model Material {
+  id        String   @id @default(cuid())
+  companyId String
+  name      String
+  unit      Unit
+  createdAt DateTime @default(now())
+
+  company   Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  purchases Purchase[]
+
+  @@index([companyId, name])
+}
+
+/// Tayyor mahsulot modeli
+model Product {
+  id          String   @id @default(cuid())
+  companyId   String
+  name        String
+  description String?
+  unit        Unit     @default(dona)
+  price       Decimal? @db.Decimal(18, 2)
+  createdAt   DateTime @default(now())
+
+  company     Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  sales       Sale[]
+  productions Production[]
+  workEntries WorkEntry[]
+
+  @@index([companyId, name])
+}
+
+/// Ta'minotchi, mijoz yoki ishchi
+model Party {
+  id             String    @id @default(cuid())
+  companyId      String
+  kind           PartyKind
+  name           String
+  phone          String?
+  openingBalance Decimal   @default(0) @db.Decimal(18, 2)
+  /// Faqat ishchi uchun
+  payType        PayType?
+  /// Ishbay bo'lsa bir dona narxi, oylik bo'lsa oylik summasi
+  rate           Decimal?  @db.Decimal(18, 2)
+  createdAt      DateTime  @default(now())
+
+  company     Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  purchases   Purchase[]
+  sales       Sale[]
+  payments    Payment[]
+  workEntries WorkEntry[]
+  productions Production[] @relation("ProductionWorker")
+
+  @@index([companyId, kind, name])
+}
+
+/// Ta'minotchidan xarid — qarzim oshadi
+model Purchase {
+  id         String    @id @default(cuid())
+  companyId  String
+  partyId    String
+  materialId String
+  qty        Decimal   @db.Decimal(18, 3)
+  unitPrice  Decimal   @db.Decimal(18, 2)
+  total      Decimal   @db.Decimal(18, 2)
+  date       DateTime  @db.Date
+  note       String?
+  createdBy  String
+  createdAt  DateTime  @default(now())
+  deletedAt  DateTime?
+
+  company  Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  party    Party    @relation(fields: [partyId], references: [id], onDelete: Cascade)
+  material Material @relation(fields: [materialId], references: [id], onDelete: Restrict)
+
+  @@index([companyId, partyId, deletedAt])
+  @@index([companyId, date])
+}
+
+/// Mijozga sotuv — uning qarzi oshadi, ombordan chiqadi
+model Sale {
+  id        String    @id @default(cuid())
+  companyId String
+  partyId   String
+  productId String
+  qty       Decimal   @db.Decimal(18, 3)
+  unitPrice Decimal   @db.Decimal(18, 2)
+  total     Decimal   @db.Decimal(18, 2)
+  date      DateTime  @db.Date
+  note      String?
+  createdBy String
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  party   Party   @relation(fields: [partyId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([companyId, partyId, deletedAt])
+  @@index([companyId, productId, deletedAt])
+  @@index([companyId, date])
+}
+
+/// Pul harakati. Kimga tegishli ekani partyId orqali aniqlanadi.
+model Payment {
+  id        String           @id @default(cuid())
+  companyId String
+  partyId   String
+  direction PaymentDirection
+  amount    Decimal          @db.Decimal(18, 2)
+  /// Faqat ishchiga to'lovda: avans yoki oylik
+  kind      PaymentKind?
+  date      DateTime         @db.Date
+  note      String?
+  createdBy String
+  createdAt DateTime         @default(now())
+  deletedAt DateTime?
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  party   Party   @relation(fields: [partyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, partyId, deletedAt])
+  @@index([companyId, date])
+}
+
+/// Ishlab chiqarildi — ombor qoldig'i oshadi
+model Production {
+  id        String    @id @default(cuid())
+  companyId String
+  productId String
+  qty       Decimal   @db.Decimal(18, 3)
+  workerId  String?
+  date      DateTime  @db.Date
+  note      String?
+  createdBy String
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  worker  Party?  @relation("ProductionWorker", fields: [workerId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, productId, deletedAt])
+  @@index([companyId, date])
+}
+
+/// Ishchi bajargan ish — unga berilishi kerak bo'lgan pul oshadi
+model WorkEntry {
+  id        String    @id @default(cuid())
+  companyId String
+  partyId   String
+  /// Tayyor mahsulot tanlansa
+  productId String?
+  /// Yoki oddiy matn: "Tikuv", "Bichuv"
+  label     String?
+  qty       Decimal   @db.Decimal(18, 3)
+  unitPrice Decimal   @db.Decimal(18, 2)
+  amount    Decimal   @db.Decimal(18, 2)
+  date      DateTime  @db.Date
+  note      String?
+  createdBy String
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  company Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  party   Party    @relation(fields: [partyId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, partyId, deletedAt])
+  @@index([companyId, date])
+}

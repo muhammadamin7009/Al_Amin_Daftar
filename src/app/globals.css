@@ -1,26 +1,95 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Daftar rangi: oq qog'oz, qora siyoh */
+  --color-paper: #ffffff;
+  --color-page: #f4f4f5;
+  --color-ink: #18181b;
+  --color-muted: #71717a;
+  --color-line: #d4d4d8;
+
+  /* Mening qarzim — qizil */
+  --color-debt: #501313;
+  --color-debt-soft: #fcebeb;
+
+  /* Menga qarz — yashil */
+  --color-paid: #173404;
+  --color-paid-soft: #eaf3de;
+
+  /* Ishchilar va ombor — kulrang */
+  --color-worker: #3f3f46;
+  --color-worker-soft: #e4e4e7;
+
+  /* Ogohlantirish */
+  --color-warn: #713f12;
+  --color-warn-soft: #fef3c7;
+
+  --font-sans:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  /* Katta shrift — sexda, telefonda, ko'zoynaksiz o'qiladi */
+  font-size: 18px;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* Foydalanuvchi barmog'i katta: hamma bosiladigan narsa kamida 48px */
+@layer components {
+  .btn {
+    @apply flex min-h-14 w-full items-center justify-center gap-2
+           rounded-xl px-5 text-lg font-semibold
+           active:translate-y-px disabled:opacity-40;
+  }
+
+  .card {
+    @apply rounded-xl border border-line bg-paper;
+  }
+
+  .field {
+    @apply min-h-14 w-full rounded-xl border-2 border-line bg-paper
+           px-4 text-xl outline-none focus:border-ink;
+  }
+
+  .field-error {
+    @apply border-debt;
+  }
+
+  .label {
+    @apply mb-2 block text-base font-medium text-muted;
+  }
+
+  .hint {
+    @apply mt-2 text-base text-muted;
+  }
+
+  .error-text {
+    @apply mt-2 text-base text-debt;
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.sheet-panel {
+  animation: sheet-up 180ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet-panel {
+    animation: none;
+  }
 }
